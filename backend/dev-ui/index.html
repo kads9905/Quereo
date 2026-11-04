@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quereo test UI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Plain test page for the API. Served by the backend in development only. -->
+
+  <section id="auth-view" class="auth" hidden>
+    <h1>Quereo</h1>
+    <p class="muted">Find the slow query, see why, and prove the fix.</p>
+    <form id="auth-form" class="card stack">
+      <label id="name-field" hidden>Full name <input name="fullName" autocomplete="name"></label>
+      <label>Email <input name="email" type="email" required autocomplete="email"></label>
+      <label>Password <input name="password" type="password" required minlength="8" autocomplete="current-password"></label>
+      <button type="submit" id="auth-submit">Log in</button>
+      <button type="button" class="link" id="auth-toggle">No account? Register</button>
+      <p class="error" id="auth-error"></p>
+    </form>
+  </section>
+
+  <section id="app-view" hidden>
+    <header class="topbar">
+      <strong>Quereo</strong>
+      <span class="muted" id="ai-status"></span>
+      <span class="spacer"></span>
+      <span id="user-email" class="muted"></span>
+      <button class="secondary small" id="logout">Log out</button>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="row between">
+          <h2>Connections</h2>
+          <button class="small" id="show-add">+ Add</button>
+        </div>
+        <ul id="connection-list" class="list"></ul>
+
+        <form id="add-form" class="card stack" hidden>
+          <label>Type <select name="type"></select></label>
+          <button type="button" class="secondary small" id="fill-sample">Fill sample database</button>
+          <label>Name <input name="name" required></label>
+          <label>Host <input name="host" required></label>
+          <label>Port <input name="port" type="number" required></label>
+          <label>Database <input name="database" required></label>
+          <label>Username <input name="username" required></label>
+          <label>Password <input name="password" type="password"></label>
+          <label class="check"><input name="readOnly" type="checkbox" checked> Read-only</label>
+          <div class="row">
+            <button type="submit">Test and save</button>
+            <button type="button" class="secondary" id="cancel-add">Cancel</button>
+          </div>
+          <p class="error" id="add-error"></p>
+        </form>
+      </aside>
+
+      <main id="main">
+        <p class="muted empty" id="no-connection">Add or pick a connection to start.</p>
+
+        <div id="connection-view" hidden>
+          <div class="row between">
+            <h2 id="connection-title"></h2>
+            <button class="secondary small" id="delete-connection">Delete connection</button>
+          </div>
+
+          <nav class="tabs">
+            <button data-tab="query" class="active">Query</button>
+            <button data-tab="slow">Slow queries</button>
+            <button data-tab="advisor">Index Advisor</button>
+            <button data-tab="monitors">Monitors</button>
+            <button data-tab="schema">Schema</button>
+          </nav>
+
+          <!-- Query -->
+          <section data-panel="query">
+            <div class="row">
+              <input id="ai-question" class="grow" placeholder="Ask in plain English, e.g. top 5 cities by order value">
+              <button class="secondary" id="ai-generate">Write query with AI</button>
+            </div>
+            <p class="muted" id="ai-note"></p>
+            <textarea id="sql" rows="6" spellcheck="false"></textarea>
+            <div class="row">
+              <button id="run">Run</button>
+              <button class="secondary" id="explain">Explain</button>
+              <button class="secondary" id="ai-explain">Explain with AI</button>
+              <button class="secondary" id="save-query">Save</button>
+              <span class="muted" id="run-meta"></span>
+            </div>
+            <div id="query-error" class="error"></div>
+            <div id="verdict"></div>
+            <div id="ai-explanation"></div>
+            <div id="results" class="table-wrap"></div>
+            <h3>Saved queries</h3>
+            <ul id="saved-list" class="list compact"></ul>
+            <h3>History</h3>
+            <ul id="history-list" class="list compact"></ul>
+          </section>
+
+          <!-- Slow queries -->
+          <section data-panel="slow" hidden>
+            <div class="row">
+              <label>Sort by
+                <select id="slow-sort">
+                  <option value="total">Total time</option>
+                  <option value="mean">Slowest per run</option>
+                  <option value="calls">Most runs</option>
+                </select>
+              </label>
+              <button id="slow-load">Load</button>
+            </div>
+            <div id="slow-error" class="error"></div>
+            <div id="slow-results" class="table-wrap"></div>
+          </section>
+
+          <!-- Index Advisor -->
+          <section data-panel="advisor" hidden>
+            <p class="muted">Uses the query from the Query tab. "Try it" needs a connection with read-only turned off.</p>
+            <div class="row">
+              <button id="advisor-suggest">Suggest indexes</button>
+              <button class="secondary" id="advisor-unused">Find unused indexes</button>
+            </div>
+            <div id="advisor-error" class="error"></div>
+            <div id="advisor-results"></div>
+          </section>
+
+          <!-- Monitors -->
+          <section data-panel="monitors" hidden>
+            <form id="monitor-form" class="card stack">
+              <strong>New monitor</strong>
+              <label>Name <input name="name" required></label>
+              <label>Query <textarea name="sql" rows="2" required spellcheck="false"></textarea></label>
+              <div class="row">
+                <label>Check
+                  <select name="checkType">
+                    <option value="value">First value</option>
+                    <option value="row_count">Row count</option>
+                    <option value="duration">Duration (ms)</option>
+                  </select>
+                </label>
+                <label>Must be
+                  <select name="operator">
+                    <option>&lt;</option><option>&lt;=</option><option>&gt;</option>
+                    <option>&gt;=</option><option>==</option><option>!=</option>
+                  </select>
+                </label>
+                <label>Threshold <input name="threshold" type="number" step="any" required></label>
+                <label>Every (s) <input name="intervalSeconds" type="number" min="60" value="60" required></label>
+              </div>
+              <label>Webhook URL (optional, Slack/Discord) <input name="webhookUrl" type="url"></label>
+              <button type="submit">Create and run once</button>
+              <p class="error" id="monitor-error"></p>
+            </form>
+            <div class="row between">
+              <h3>Monitors</h3>
+              <button class="secondary small" id="monitors-refresh">Refresh</button>
+            </div>
+            <div id="monitor-list" class="table-wrap"></div>
+            <h3>Open incidents</h3>
+            <ul id="incident-list" class="list compact"></ul>
+          </section>
+
+          <!-- Schema -->
+          <section data-panel="schema" hidden>
+            <div class="row">
+              <button id="schema-load">Show schema</button>
+              <label>Compare with <select id="diff-target"></select></label>
+              <button class="secondary" id="schema-diff">Compare</button>
+            </div>
+            <div id="schema-error" class="error"></div>
+            <div id="schema-results"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>

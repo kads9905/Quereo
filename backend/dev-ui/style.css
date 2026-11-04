@@ -1,0 +1,97 @@
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --text: #1c2430;
+  --muted: #6b7380;
+  --border: #dfe3e8;
+  --accent: #2f5bea;
+  --pass: #1a7f4b;
+  --warn: #a86400;
+  --slow: #c0362c;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 14px;
+  color: var(--text);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); }
+h1, h2, h3 { margin: 0; }
+h2 { font-size: 16px; }
+h3 { font-size: 14px; margin-top: 20px; }
+[hidden] { display: none !important; }
+
+input, select, textarea, button { font: inherit; }
+input, select, textarea {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: #fff;
+  width: 100%;
+}
+textarea { font-family: ui-monospace, Consolas, monospace; font-size: 13px; resize: vertical; }
+label { display: flex; flex-direction: column; gap: 4px; color: var(--muted); font-size: 12px; }
+label.check { flex-direction: row; align-items: center; color: var(--text); font-size: 14px; }
+label.check input { width: auto; }
+
+button {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+button.secondary { background: #fff; color: var(--accent); }
+button.small { padding: 3px 8px; font-size: 12px; }
+button.link { background: none; border: none; color: var(--accent); padding: 0; }
+button:disabled { opacity: 0.5; cursor: wait; }
+
+.muted { color: var(--muted); }
+.error { color: var(--slow); white-space: pre-wrap; }
+.error:empty { display: none; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+.stack { display: flex; flex-direction: column; gap: 10px; }
+.row { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; margin: 10px 0; }
+.row.between { justify-content: space-between; align-items: center; }
+.grow { flex: 1; min-width: 200px; }
+.spacer { flex: 1; }
+
+.auth { max-width: 360px; margin: 10vh auto; display: flex; flex-direction: column; gap: 8px; }
+
+.topbar { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--border); }
+.layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 49px); }
+.sidebar { border-right: 1px solid var(--border); padding: 12px; background: var(--card); }
+main { padding: 16px 20px; min-width: 0; }
+.empty { margin-top: 40px; text-align: center; }
+
+.list { list-style: none; padding: 0; margin: 8px 0; }
+.list li { padding: 8px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; }
+.list li:hover { background: var(--bg); }
+.list li.active { background: #e8edfd; }
+.list.compact li { padding: 4px 8px; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+.list .sub { color: var(--muted); font-size: 12px; }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: 12px 0; }
+.tabs button { background: none; color: var(--muted); border: none; border-bottom: 2px solid transparent; border-radius: 0; }
+.tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.table-wrap { overflow-x: auto; margin-top: 10px; }
+table { border-collapse: collapse; width: 100%; background: var(--card); font-size: 13px; }
+th, td { border: 1px solid var(--border); padding: 4px 8px; text-align: left; vertical-align: top; }
+th { background: var(--bg); }
+td { font-family: ui-monospace, Consolas, monospace; max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; color: #fff; font-weight: 600; font-size: 12px; }
+.badge.PASS, .badge.passing, .badge.recommended { background: var(--pass); }
+.badge.WARN, .badge.pending, .badge.small_gain { background: var(--warn); }
+.badge.SLOW, .badge.failing, .badge.not_used, .badge.breaking { background: var(--slow); }
+.badge.warning { background: var(--warn); }
+.badge.info { background: var(--muted); }
+
+.verdict { margin-top: 12px; }
+.verdict ul { margin: 6px 0; padding-left: 18px; }
+.verdict li { margin: 4px 0; }
+.verdict .suggestion { color: var(--muted); }
+code, pre { font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+pre { background: var(--bg); padding: 8px; border-radius: 6px; white-space: pre-wrap; margin: 6px 0; }

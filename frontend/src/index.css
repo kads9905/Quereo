@@ -1,0 +1,507 @@
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+/*
+  Quereo design system — one system for the site, auth and the app.
+  ─────────────────────────────────────────────────────────────────
+  Near-black ground, hairline borders, white primary actions, one violet
+  accent. Mono for display headings and labels, grotesk for reading.
+  Full-width layouts with a small fluid gutter. `.light` flips any section
+  to the paper palette (same tokens). Components use these tokens only.
+
+  Motion: ease-out everywhere, UI feedback under 300 ms, entrances up to
+  ~800 ms, only transform / opacity / filter animate, and everything
+  settles instantly under prefers-reduced-motion.
+*/
+/* screens shorter than a laptop: auth pages and the sidebar compact themselves */
+@custom-variant short (@media (max-height: 860px));
+
+@theme {
+  --color-*: initial;
+
+  --color-bg: #0b0b0c;
+  --color-subtle: #101012;     /* sidebar, bands */
+  --color-fill: #19191c;       /* chips, rows, hovers */
+  --color-line: #222226;       /* hairlines */
+  --color-line-2: #333338;     /* inputs, stronger borders */
+  --color-ink: #f4f4f5;        /* text, primary buttons */
+  --color-ink-2: #a3a3a8;      /* body text */
+  --color-ink-3: #6f6f76;      /* meta, placeholders */
+
+  --color-accent: #7a67ff;     /* Quereo violet */
+  --color-accent-ink: #a99dff; /* accent text on dark */
+  --color-accent-soft: #221d45;
+
+  /* Status — inside product UI only */
+  --color-pass: #4ade80;
+  --color-pass-soft: #12261a;
+  --color-warn: #fbbf24;
+  --color-warn-soft: #2a2110;
+  --color-slow: #f87171;
+  --color-slow-soft: #2c1414;
+
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  /* Type scale */
+  --text-label: 11px;    --text-label--line-height: 16px;   /* mono caps */
+  --text-xs: 12px;       --text-xs--line-height: 18px;
+  --text-sm: 13px;       --text-sm--line-height: 20px;
+  --text-base: 14px;     --text-base--line-height: 22px;
+  --text-md: 16px;       --text-md--line-height: 26px;
+  --text-lg: 20px;       --text-lg--line-height: 28px;
+  --text-xl: 28px;       --text-xl--line-height: 34px;
+  --text-h2: 32px;       --text-h2--line-height: 38px;      /* section headings on phones */
+  --text-2xl: 52px;      --text-2xl--line-height: 56px;     /* section headings */
+  --text-hero: 96px;     --text-hero--line-height: 94px;    /* hero */
+
+  --radius-*: initial;
+  --radius-xs: 2px;      /* buttons, chips: nearly square */
+  --radius-sm: 4px;
+  --radius-md: 6px;      /* cards, panels */
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);   /* one expo-out curve for everything */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+@layer base {
+  :root {
+    --gutter: clamp(16px, 2.4vw, 40px);
+    --content: 1200px;  /* site content column; backgrounds still run full bleed */
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    color-scheme: dark;
+    background: var(--color-bg);
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+  ::selection {
+    background: var(--color-accent);
+    color: #fff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .tabular { font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--color-line-2); border: 3px solid var(--color-bg); border-radius: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+}
+
+@layer components {
+  /* Site sections: full-bleed box, content held to a centred column */
+  .gutter { padding-inline: max(var(--gutter), calc((100% - var(--content)) / 2)); }
+  /* App pages: wide, with a small fluid gutter */
+  .gutter-app { padding-inline: var(--gutter); }
+  .frame { width: 100%; padding-inline: var(--gutter); }
+
+  /* Paper section inside the dark site */
+  .light {
+    color-scheme: light;
+    --color-bg: #ffffff;
+    --color-subtle: #fafafa;
+    --color-fill: #f2f2f3;
+    --color-line: #e8e8ea;
+    --color-line-2: #d4d4d8;
+    --color-ink: #0b0b0c;
+    --color-ink-2: #55555c;
+    --color-ink-3: #8a8a91;
+    --color-accent-ink: #4f3be0;
+    --color-accent-soft: #efecff;
+    --color-pass: #15803d;
+    --color-pass-soft: #e9f6ee;
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+
+  /* Dark product panel inside a paper section */
+  .ink {
+    color-scheme: dark;
+    --color-bg: #0b0b0c;
+    --color-subtle: #101012;
+    --color-fill: #19191c;
+    --color-line: #222226;
+    --color-line-2: #333338;
+    --color-ink: #f4f4f5;
+    --color-ink-2: #a3a3a8;
+    --color-ink-3: #6f6f76;
+    --color-accent-ink: #a99dff;
+    --color-accent-soft: #221d45;
+    --color-pass: #4ade80;
+    --color-pass-soft: #12261a;
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+
+  /* Mono caps: labels, eyebrows, table heads */
+  .caps {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Display headings: mono, tightened */
+  .heading {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    letter-spacing: -0.05em;
+    text-wrap: balance;
+  }
+
+  /* Section eyebrow: ■ LABEL ───── */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-2);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--color-accent);
+  }
+
+  .press {
+    transition: transform 160ms var(--ease-out), background-color 150ms ease, border-color 150ms ease, color 150ms ease, opacity 150ms ease, box-shadow 200ms ease;
+  }
+  .press:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  /* Arrow that nudges forward on hover of its parent */
+  .nudge { transition: transform 200ms var(--ease-out); }
+  .group:hover .nudge { transform: translateX(3px); }
+
+  /* Link underline that draws in from the left */
+  .draw {
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size 250ms var(--ease-out), color 150ms ease;
+  }
+  .draw:hover { background-size: 100% 1px; }
+
+  /* Cards that answer the pointer */
+  .lift {
+    transition: border-color 300ms ease, background-color 300ms ease;
+  }
+  @media (hover: hover) {
+    .lift:hover { border-color: var(--color-line-2); background-color: var(--color-fill); }
+  }
+
+  /* Faint square grid backdrop */
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--color-line) 70%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-line) 70%, transparent) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Accordion: height animates through grid rows */
+  .accordion {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 300ms var(--ease-out), opacity 250ms ease;
+  }
+  .accordion[data-open="true"] { grid-template-rows: 1fr; opacity: 1; }
+  .accordion > * { overflow: hidden; min-height: 0; }
+
+  /* Live dot with a soft ring */
+  .live { position: relative; }
+  .live::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 9999px;
+    border: 1px solid currentColor;
+    animation: ping 1.8s var(--ease-out) infinite;
+  }
+
+  /* Skeleton block */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-fill);
+    border-radius: var(--radius-xs);
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-ink) 6%, transparent), transparent);
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+}
+
+/* ── Scroll reveals (toggled by <Reveal>) ─────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+[data-reveal][data-shown="true"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Headline words rise out of a mask, one after another */
+.words .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.words .w > span {
+  display: inline-block;
+  transform: translateY(108%);
+  transition: transform 1000ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 45ms);
+}
+.words[data-shown="true"] .w > span { transform: none; }
+
+/* Bars that grow in from their base */
+.grow-y { transform-origin: bottom; animation: grow-y 700ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 25ms); }
+.grow-x { transform-origin: left; animation: grow-x 900ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 60ms); }
+
+/* Route change inside the app */
+.page { animation: page-in 380ms var(--ease-out) both; }
+
+/* Panels that swap in place */
+.swap { animation: swap-in 320ms var(--ease-out) both; }
+
+/* Live badge: each new result slides up into place */
+.ticker { animation: ticker-in 450ms var(--ease-out) both; }
+@keyframes ticker-in { from { opacity: 0; transform: translateY(70%); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+
+/* Infinite strip */
+.marquee { display: flex; width: max-content; animation: marquee 40s linear infinite; }
+.marquee:hover { animation-play-state: paused; }
+
+/* Native dialog: scale up from 96%, backdrop fades */
+dialog[open] { animation: pop 220ms var(--ease-out); }
+dialog[open]::backdrop { animation: fade 220ms ease-out; }
+
+/* ── Gallery-style effects, on Quereo tokens (see ui/fx.jsx) ───────── */
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  background: radial-gradient(360px circle at var(--x, 50%) var(--y, 50%), color-mix(in srgb, var(--color-accent) 6%, transparent), transparent 70%);
+}
+@media (hover: hover) { .spotlight:hover::before { opacity: 1; } }
+
+@property --beam-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.beam {
+  padding: 1px;
+  background: conic-gradient(from var(--beam-angle), transparent 0deg, transparent 300deg, var(--color-accent) 340deg, #fff 355deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: beam var(--beam-duration, 7s) linear infinite;
+}
+@keyframes beam { to { --beam-angle: 360deg; } }
+
+.shimmer-text {
+  background: linear-gradient(100deg, var(--color-ink-2) 40%, var(--color-ink) 50%, var(--color-ink-2) 60%) 0 0 / 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer-text 3.2s ease-in-out infinite;
+}
+@keyframes shimmer-text { from { background-position: 125% 0; } to { background-position: -125% 0; } }
+
+.pop-in { animation: pop-in 420ms var(--ease-out) both; }
+@keyframes pop-in { from { opacity: 0; transform: translateY(-10px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+/* Dot grid that fades out toward the edges */
+.dots {
+  background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 16%, transparent) 1px, transparent 1px);
+  background-size: 18px 18px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beam, .shimmer-text, .pop-in { animation: none; }
+  .shimmer-text { color: var(--color-ink-2); background: none; }
+}
+
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise 420ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 60ms); }
+
+@keyframes scan { from { transform: translateX(-100%); } to { transform: translateX(400%); } }
+.scan { animation: scan 900ms var(--ease-in-out) infinite; }
+
+@keyframes grow-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes page-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes swap-in { from { opacity: 0; transform: translateY(6px) scale(0.99); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes marquee { to { transform: translateX(-50%); } }
+@keyframes pop { from { opacity: 0; transform: scale(0.96) translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ping { 0% { transform: scale(0.6); opacity: 0.8; } 100% { transform: scale(2.2); opacity: 0; } }
+@keyframes shimmer { to { transform: translateX(100%); } }
+@keyframes blink { 50% { opacity: 0; } }
+.caret { animation: blink 1s steps(1) infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .ticker, .rise, .scan, .grow-y, .grow-x, .page, .swap, .marquee, .live::after, .skeleton::after, .caret,
+  dialog[open], dialog[open]::backdrop { animation: none; }
+  [data-reveal], .words .w > span { transition: none; transform: none; filter: none; opacity: 1; }
+  .press:active:not(:disabled) { transform: none; }
+}
+
+/* ── Gate: the full-screen moment between signing in/out and the next page */
+.gate { animation: fade 260ms var(--ease-out) both; }
+.gate[data-leaving] { animation: gate-out 700ms var(--ease-out) both; }
+@keyframes gate-out { from { clip-path: inset(0 0 0 0); } to { clip-path: inset(0 0 100% 0); } }
+.gate-cell { transform-box: fill-box; transform-origin: center; animation: gate-cell 460ms var(--ease-out) both; animation-delay: calc(var(--i) * 48ms); }
+@keyframes gate-cell { from { opacity: 0; transform: scale(0.2); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
+.gate-core { transform-box: fill-box; transform-origin: center; animation: gate-core 1.6s var(--ease-out) both; animation-delay: var(--d, 1s); }
+@keyframes gate-core { 0% { opacity: 0; transform: scale(0); } 30% { opacity: 1; transform: scale(1.35); } 50%, 100% { opacity: 1; transform: none; } }
+.gate-fade { transform-box: fill-box; transform-origin: center; animation: gate-fade 520ms ease-in both; animation-delay: calc(var(--i) * 40ms + 200ms); }
+@keyframes gate-fade { to { opacity: 0.12; transform: scale(0.5); } }
+.gate-fall { transform-box: fill-box; transform-origin: center; animation: gate-fall 900ms cubic-bezier(0.55, 0, 0.9, 0.4) both; animation-delay: calc(var(--i) * 70ms + 400ms); }
+@keyframes gate-fall { 20% { transform: translateY(-1px) rotate(var(--r, 8deg)); } to { opacity: 0; transform: translateY(18px) rotate(calc(var(--r, 8deg) * 4)); } }
+.gate-bar { transform-origin: left; animation: grow-x var(--gate-ms, 2600ms) cubic-bezier(0.4, 0, 0.2, 1) both; }
+.gate-line { animation: gate-line 380ms var(--ease-out) both; }
+@keyframes gate-line { from { opacity: 0; transform: translateX(-6px); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
+.spin { animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Toasts: sonner, unstyled, dressed in Quereo's tokens */
+[data-sonner-toaster] { --width: 372px; font-family: var(--font-sans); }
+.q-toast {
+  position: relative; display: flex; width: var(--width); align-items: flex-start; gap: 12px; overflow: hidden;
+  border: 1px solid var(--color-line-2); border-radius: var(--radius-sm); background: color-mix(in oklab, var(--color-subtle) 92%, transparent);
+  padding: 13px 38px 15px 13px; color: var(--color-ink); box-shadow: 0 24px 48px -16px rgb(0 0 0 / 0.75); backdrop-filter: blur(14px);
+}
+.q-toast::after {
+  content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; transform-origin: left; background: var(--tone, var(--color-accent)); opacity: 0.7;
+  animation: toast-life var(--life, 4000ms) linear both;
+}
+.q-toast[data-type="loading"]::after { display: none; }
+[data-sonner-toaster]:hover .q-toast::after { animation-play-state: paused; }
+@keyframes toast-life { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+.q-toast[data-type="success"] { --tone: var(--color-pass); }
+.q-toast[data-type="error"] { --tone: var(--color-slow); --life: 6000ms; }
+.q-toast[data-type="warning"] { --tone: var(--color-warn); }
+.q-toast [data-icon] { margin: 0; width: auto; height: auto; }
+.q-toast [data-close-button] {
+  position: absolute; top: 9px; right: 9px; left: auto; transform: none; display: grid; place-items: center; width: 22px; height: 22px;
+  border: 0; border-radius: var(--radius-xs); background: transparent; color: var(--color-ink-3); opacity: 0; transition: opacity 150ms, background 150ms, color 150ms;
+}
+.q-toast:hover [data-close-button], .q-toast [data-close-button]:focus-visible { opacity: 1; }
+.q-toast [data-close-button]:hover { background: var(--color-fill); color: var(--color-ink); }
+
+/* ── Profile card in the sidebar footer */
+.pcard-enter { animation: pcard-in 340ms var(--ease-out) both; transform-origin: bottom left; }
+@keyframes pcard-in { from { opacity: 0; transform: translateY(8px) scale(0.97); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+.pcard-leave { animation: pcard-out 180ms ease-in both; transform-origin: bottom left; }
+@keyframes pcard-out { to { opacity: 0; transform: translateY(6px) scale(0.98); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .gate, .gate[data-leaving], .gate-cell, .gate-core, .gate-fade, .gate-fall, .gate-line, .q-toast::after, .pcard-enter, .pcard-leave, .spin { animation: none; }
+  .gate[data-leaving] { opacity: 0; }
+}
+.shake { animation: shake 420ms var(--ease-out); }
+@keyframes shake { 15% { transform: translateX(-6px); } 35% { transform: translateX(5px); } 55% { transform: translateX(-3px); } 75% { transform: translateX(2px); } }
+@media (prefers-reduced-motion: reduce) { .shake { animation: none; } }
+
+/* ── Collapsible sidebar: labels fade as the rail closes, and return after it opens */
+.rail-label { transition: opacity 260ms var(--ease-out) 140ms; }
+.is-rail .rail-label { opacity: 0; pointer-events: none; transition-delay: 0ms; transition-duration: 120ms; }
+.tip-in { animation: tip-in 220ms var(--ease-out) both; }
+@keyframes tip-in { from { opacity: 0; transform: translate(-6px, -50%); } to { opacity: 1; transform: translate(0, -50%); } }
+.pcard-enter-side { animation: pcard-side 340ms var(--ease-out) both; transform-origin: bottom left; }
+@keyframes pcard-side { from { opacity: 0; transform: translateX(-8px) scale(0.97); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .rail-label, .tip-in, .pcard-enter-side { transition: none; animation: none; }
+}
+
+/* activity heatmap cells pop in column by column */
+.heat-cell { animation: heat-in 420ms var(--ease-out) both; }
+@keyframes heat-in { from { opacity: 0; transform: scale(0.3); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .heat-cell { animation: none; } }
+
+/* ── Warp: the full-screen gate built from the logo's pixels */
+.warp { animation: fade 300ms var(--ease-out) both; }
+.warp-q { position: relative; width: var(--q); height: var(--q); }
+
+/* open: pixels fly in from all over the screen and lock into the Q */
+.warp-cell-open { animation: warp-in 1100ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes warp-in {
+  0% { opacity: 0; transform: translate(var(--fx), var(--fy)) rotate(var(--rot)) scale(0.35); }
+  25% { opacity: 1; }
+  100% { opacity: 1; transform: none; }
+}
+.warp-core-open { opacity: 0; animation: warp-core 1300ms var(--ease-out) both; box-shadow: 0 0 60px 6px rgb(122 103 255 / 0.55); }
+@keyframes warp-core {
+  0% { opacity: 0; transform: scale(0); }
+  35% { opacity: 1; transform: scale(1.5); }
+  55% { transform: scale(0.9); }
+  70%, 100% { opacity: 1; transform: none; }
+}
+/* close: the assembled Q scatters back into the dark */
+.warp-cell-close { animation: warp-out 1100ms cubic-bezier(0.55, 0, 0.8, 0.3) both; }
+@keyframes warp-out {
+  0%, 10% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translate(var(--fx), var(--fy)) rotate(var(--rot)) scale(0.4); }
+}
+.warp-core-close { animation: warp-core-close 1600ms var(--ease-out) both; animation-delay: 900ms !important; box-shadow: 0 0 40px rgb(122 103 255 / 0.5); }
+@keyframes warp-core-close { 0% { transform: none; } 30% { transform: scale(1.2); } 100% { transform: scale(0.15); opacity: 0.3; } }
+
+/* drop: the Q cracks and every pixel falls */
+.warp-cell-drop { animation: warp-fall 1200ms cubic-bezier(0.55, 0, 0.9, 0.4) both; }
+@keyframes warp-fall {
+  0% { opacity: 1; transform: none; }
+  12% { transform: translate(1px, -2px) rotate(calc(var(--rot) * 0.02)); }
+  100% { opacity: 0; transform: translateY(55vh) rotate(calc(var(--rot) * 0.5)); }
+}
+.warp-core-drop { animation: warp-core-drop 2200ms cubic-bezier(0.55, 0, 0.9, 0.4) both; animation-delay: 1500ms !important; box-shadow: 0 0 50px rgb(255 92 92 / 0.45); }
+@keyframes warp-core-drop { 0% { transform: none; } 15% { transform: scale(1.15) rotate(-4deg); } 100% { opacity: 0; transform: translateY(60vh) rotate(-40deg); } }
+
+/* dust */
+.warp-dust-open { opacity: 0; animation: dust-in ease-in both; }
+@keyframes dust-in { 0% { opacity: 0; transform: none; } 25% { opacity: 0.8; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3); } }
+.warp-dust-close { opacity: 0; animation: dust-out var(--ease-out) both; }
+@keyframes dust-out { 0% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3); } 30% { opacity: 0.7; } 100% { opacity: 0; transform: none; } }
+.warp-dust-drop { opacity: 0; animation: dust-fall ease-in both; }
+@keyframes dust-fall { 0% { opacity: 0; transform: none; } 25% { opacity: 0.7; } 100% { opacity: 0; transform: translateY(40vh); } }
+
+.warp-glow { animation: warp-glow 2.4s ease-in-out infinite alternate; }
+@keyframes warp-glow { from { opacity: 0.7; transform: translate(-50%, -50%) scale(0.92); } to { opacity: 1; transform: translate(-50%, -50%) scale(1.06); } }
+.warp-hud { animation: fade 600ms var(--ease-out) 200ms both; }
+.warp-copy { animation: warp-copy 700ms var(--ease-out) both; animation-delay: 500ms; }
+@keyframes warp-copy { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.warp-copy-out { animation: warp-copy-out 350ms ease-in both !important; }
+@keyframes warp-copy-out { to { opacity: 0; transform: translateY(-8px); filter: blur(4px); } }
+.warp-leave { animation: warp-leave 650ms ease-in both; }
+@keyframes warp-leave { to { opacity: 0; filter: blur(6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .warp, .warp-cell-open, .warp-core-open, .warp-cell-close, .warp-core-close, .warp-cell-drop, .warp-core-drop,
+  [class*="warp-dust-"], .warp-glow, .warp-hud, .warp-copy, .warp-copy-out { animation: none !important; }
+  [class*="warp-dust-"] { opacity: 0; }
+  .warp-leave { animation: warp-leave 200ms both; }
+}

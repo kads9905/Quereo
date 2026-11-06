@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const DB_NAME = "querylens";
+const DB_NAME = "quereo";
 
 // Quereo's own data (users, connections, monitors...) lives in MongoDB.
 // dbName is passed as an option so it works with any URI, including Atlas

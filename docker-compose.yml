@@ -1,0 +1,40 @@
+# LOCAL TESTING ONLY. Not used in production.
+# Runs sample databases that Quereo connects to, so every adapter can be
+# tested against a real server. Quereo's own data lives in MongoDB.
+services:
+  postgres:
+    image: postgres:16
+    container_name: querylens-sample-postgres
+    # pg_stat_statements must be preloaded for the slow query dashboard
+    command: ["postgres", "-c", "shared_preload_libraries=pg_stat_statements", "-c", "pg_stat_statements.track=top"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./docker/postgres:/docker-entrypoint-initdb.d
+
+  mysql:
+    image: mysql:8.4
+    container_name: querylens-sample-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./docker/mysql:/docker-entrypoint-initdb.d
+
+  mongo:
+    image: mongo:8.0
+    container_name: querylens-sample-mongo
+    # Profile every operation (for the slow query dashboard). Demo only:
+    # production would use a threshold, e.g. --slowms 100
+    command: ["--profile", "1", "--slowms", "0"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./docker/mongo:/docker-entrypoint-initdb.d
